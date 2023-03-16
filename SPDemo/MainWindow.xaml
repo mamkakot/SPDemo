@@ -1,0 +1,82 @@
+﻿<Window x:Class="SPDemo.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SPDemo"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="650" Width="1200">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.07*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        <Label Name="sos" HorizontalAlignment="Right" VerticalAlignment="Center">Рейс:</Label>
+        <ComboBox Grid.Row="0" Grid.Column="1" Name="RoutesComboBox"
+                  SelectionChanged="RoutesComboBox_OnSelectionChanged" Margin="7">
+        </ComboBox>
+        <TabControl Grid.Row="1" Grid.ColumnSpan="3">
+            <TabItem Header="Виды тары">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+
+                    <ListView Grid.Column="0" Name="PointsListView"
+                              SelectionChanged="PointsListView_OnSelectionChanged">
+                    </ListView>
+                    <TreeView Grid.Column="1" Name="UnitsTreeView" SelectedItemChanged="UnitsTreeView_OnSelectionChanged">
+                        <TreeView.ItemTemplate>
+                            <HierarchicalDataTemplate ItemsSource="{Binding Path=Units}">
+                                <TextBlock Text="{Binding Name}" />
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
+                    </TreeView>
+                    <Grid Grid.Column="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition Height="0.3*"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <DataGrid Name="ContainerQuantityDataGrid"
+                                  d:DataContext="d:DesignInstance local:ContainerQuantity"
+                                  AutoGenerateColumns="False">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Вид тары" Binding="{Binding Path=Container}" />
+                                <DataGridTextColumn Header="Количество" Binding="{Binding Path=Quantity}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <Button Grid.Row="1" Name="ButtonSave" Click="ButtonSave_OnClick" Margin="25">Сохранить</Button>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Создание ЭТрН">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="50"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" Margin="20, 0">Номер пломбы:</Label>
+                    <TextBox Grid.Row="0" Grid.Column="1" Name="TextBoxInstalledSeal"></TextBox>
+
+                    <Button Grid.Row="2" Name="ButtonCreate" Click="ButtonCreate_OnClick" Grid.ColumnSpan="2"
+                            Margin="70, 30" Height="50" Width="120">
+                        Создать ЭТрН
+                    </Button>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
