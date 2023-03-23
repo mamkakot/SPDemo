@@ -101,75 +101,119 @@ namespace SPDemo
 
             var routePoints = new List<RoutePoint>
             {
-                new() { Name = "К57", Gln = new Gln { Base = "1234 5678 1257", Child = "" } },
-                new() { Name = "К58", Gln = new Gln { Base = "1234 5678 1258", Child = "" } },
-                new() { Name = "К317", Gln = new Gln { Base = "1234 5678 1317", Child = "" } },
-                new() { Name = "К112", Gln = new Gln { Base = "1234 5678 1112", Child = "" } },
+                new() { Name = "Командор №57", Gln = new Gln { Base = "1234 5678 1257", Child = "" } },
+                new() { Name = "Командор №58", Gln = new Gln { Base = "1234 5678 1258", Child = "" } },
+                new() { Name = "Командор №317", Gln = new Gln { Base = "1234 5678 1317", Child = "" } },
+                new() { Name = "Командор №112", Gln = new Gln { Base = "1234 5678 1112", Child = "" } },
             };
 
             var routePoints2 = new List<RoutePoint>
             {
-                new() { Name = "К57", Gln = new Gln { Base = "1234 5678 1257", Child = "" } },
-                new() { Name = "К58", Gln = new Gln { Base = "1234 5678 1258", Child = "" } },
+                new() { Name = "Командор №25_КФ", Gln = new Gln { Base = "1234 5678 1257", Child = "" } },
+                new() { Name = "Командор №52_КФ", Gln = new Gln { Base = "1234 5678 1258", Child = "" } },
                 new()
                 {
-                    Name = "К58 цех пекарный", Gln = new Gln { Base = "1234 5678 1235", Child = "3421 5678 0058" }
+                    Name = "Цех пекарный КФ №25", Gln = new Gln { Base = "1234 5678 1235", Child = "3421 5678 0025" }
                 },
                 new()
                 {
-                    Name = "К58 цех кулинарный", Gln = new Gln { Base = "1234 5678 1235", Child = "3421 5678 0058" }
+                    Name = "Цех пекарный КФ №51 Аллея",
+                    Gln = new Gln { Base = "1234 5678 1235", Child = "3421 5678 0051" }
+                },
+                new()
+                {
+                    Name = "Цех Кулинарный КФ №51 Аллея",
+                    Gln = new Gln { Base = "1234 5678 1235", Child = "3421 5678 0052" }
                 },
             };
 
             var routes = new List<Route>
             {
-                new() { Name = "Рейс СП 0001", RoutePoints = routePoints, Units = units },
+                new()
+                {
+                    Name = "Рейс СП 0001", RoutePoints = routePoints, Units = units, AutoNumber = "А001АА 124",
+                    DriverName = "Иванов Иван Иванович", RouteTime = DateTime.Today, AutoType = "ЗАМ"
+                },
                 new()
                 {
                     Name = "Рейс СП 0002", RoutePoints = routePoints2,
-                    Units = new List<Unit> { new() { Name = "Все пандусы", Units = units2 } }
+                    Units = new List<Unit> { new() { Name = "Все пандусы", Units = units2 } },
+                    AutoNumber = "А002АА 124", DriverName = "Петров Иван Иванович", RouteTime = DateTime.Today,
+                    AutoType = "ОХЛ"
                 },
                 new()
                 {
                     Name = "Рейс СП 0003", RoutePoints = routePoints,
-                    Units = new List<Unit> { new() { Name = "Все пандусы", Units = units3 } }
+                    Units = new List<Unit> { new() { Name = "Все пандусы", Units = units3 } },
+                    AutoNumber = "А001АА 124", DriverName = "Сидоров Иван Иванович", RouteTime = DateTime.Today,
+                    AutoType = "ОХЛ"
                 },
-                new() { Name = "Рейс СП 0004", RoutePoints = routePoints, Units = units },
-                new() { Name = "Рейс СП 0005", RoutePoints = routePoints, Units = units },
+                new()
+                {
+                    Name = "Рейс СП 0004", RoutePoints = routePoints, Units = units, AutoNumber = "А001АА 124",
+                    DriverName = "Петров Иван Иванович", RouteTime = DateTime.Today, AutoType = "ОХЛ"
+                },
+                new()
+                {
+                    Name = "Рейс СП 0005", RoutePoints = routePoints, Units = units, AutoNumber = "А001АА 124",
+                    DriverName = "Сидоров Иван Иванович", RouteTime = DateTime.Today, AutoType = "ЗАМ"
+                },
             };
 
-            RoutesComboBox.ItemsSource = routes;
-            RoutesComboBox.SelectedIndex = 0;
-        }
+            var etrns = new List<ETrN>
+            {
+                new(name: "СП 0001", deliveryDate: DateTime.Now,
+                    senderAddress: "г. Красноярск, ул. Вавилова, д. 12", route: routes[0], routePoint: routePoints[0]),
+                new(name: "СП 0002", deliveryDate: DateTime.Now,
+                    senderAddress: "г. Красноярск, ул. Вавилова, д. 12", route: routes[0], routePoint: routePoints[0]),
+                new(name: "СП 0003", deliveryDate: DateTime.Now,
+                    senderAddress: "г. Красноярск, ул. Вавилова, д. 12", route: routes[0], routePoint: routePoints[0]),
+                new(name: "СП 0004", deliveryDate: DateTime.Now,
+                    senderAddress: "г. Красноярск, ул. Вавилова, д. 12", route: routes[0], routePoint: routePoints[0]),
+                new(name: "СП 0005", deliveryDate: DateTime.Now,
+                    senderAddress: "г. Красноярск, ул. Вавилова, д. 12", route: routes[0], routePoint: routePoints[0]),
+            };
 
-        private void RoutesComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var cb = (ComboBox)sender;
-            var selectedRoute = (Route)cb.SelectedItem;
-            PointsListView.ItemsSource = selectedRoute.RoutePoints;
-            TextBoxInstalledSeal.Text = selectedRoute.InstalledSeal;
-
-            UnitsTreeView.Visibility = Visibility.Hidden;
-            ContainerQuantityDataGrid.Visibility = Visibility.Hidden;
-            ButtonSave.Visibility = Visibility.Hidden;
+            EtrnDataGrid.ItemsSource = etrns;
+            EtrnDataGrid.SelectedIndex = 0;
+            
+            RoutesDataGrid.ItemsSource = routes;
+            RoutesDataGrid.SelectedIndex = 0;
         }
 
         private void PointsListView_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var selectedRoute = (Route)RoutesComboBox.SelectedItem;
-            UnitsTreeView.ItemsSource = selectedRoute.Units;
+            var selectedRoutePoint = (RoutePoint)PointsListView.SelectedItem;
+            var selectedUnit = UnitsTreeView.SelectedItem as Unit;
+            var containers = new List<Container>
+            {
+                new() { Name = "Ведро" },
+                new() { Name = "Посылка" },
+                new() { Name = "Коробка" }
+            };
+            try
+            {
+                var cl = selectedRoutePoint.ContainerList ??
+                         containers.Select(
+                             container => new ContainerQuantity
+                                 { Container = container, Unit = selectedUnit }).ToList();
+                ContainerQuantityDataGrid.ItemsSource = cl;
 
-            UnitsTreeView.Visibility = Visibility.Visible;
-            ContainerQuantityDataGrid.Visibility = Visibility.Hidden;
-            ButtonSave.Visibility = Visibility.Hidden;
+                ContainerQuantityDataGrid.Visibility = Visibility.Visible;
+                ButtonSave.Visibility = Visibility.Visible;
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+            }
         }
 
         private void ButtonSave_OnClick(object sender, RoutedEventArgs e)
         {
             try
             {
-                var unit = UnitsTreeView.SelectedItem as Unit;
-                unit.ContainerList = ContainerQuantityDataGrid.ItemsSource as List<ContainerQuantity>;
+                var point = PointsListView.SelectedItem as RoutePoint;
+                point.ContainerList = ContainerQuantityDataGrid.ItemsSource as List<ContainerQuantity>;
             }
             catch (Exception exception)
             {
@@ -179,7 +223,7 @@ namespace SPDemo
 
         private void ButtonCreate_OnClick(object sender, RoutedEventArgs e)
         {
-            var selectedRoute = (Route)RoutesComboBox.SelectedItem;
+            var selectedRoute = (Route)RoutesDataGrid.SelectedItem;
             selectedRoute.InstalledSeal = TextBoxInstalledSeal.Text;
             MessageBox.Show("ЭТрН созданы");
         }
@@ -189,20 +233,12 @@ namespace SPDemo
             try
             {
                 var unit = UnitsTreeView.SelectedItem as Unit;
-                var containers = new List<Container>
-                {
-                    new() { Name = "Ведро" },
-                    new() { Name = "Посылка" },
-                    new() { Name = "Коробка" }
-                };
 
                 try
                 {
-                    var cl = unit.ContainerList ??
-                             containers.Select(container => new ContainerQuantity { Container = container }).ToList();
-                    ContainerQuantityDataGrid.ItemsSource = cl;
-                    ContainerQuantityDataGrid.Visibility = Visibility.Visible;
-                    ButtonSave.Visibility = Visibility.Visible;
+                    PointsListView.Visibility = Visibility.Visible;
+                    ContainerQuantityDataGrid.Visibility = Visibility.Hidden;
+                    ButtonSave.Visibility = Visibility.Hidden;
                 }
                 catch (NullReferenceException exception)
                 {
@@ -213,6 +249,29 @@ namespace SPDemo
             {
                 Console.WriteLine(exception);
             }
+        }
+
+        private void RoutesDataGrid_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedRoute = (Route)RoutesDataGrid.SelectedItem;
+            UnitsTreeView.ItemsSource = selectedRoute.Units;
+            PointsListView.ItemsSource = selectedRoute.RoutePoints;
+            TextBoxInstalledSeal.Text = selectedRoute.InstalledSeal;
+
+            UnitsTreeView.Visibility = Visibility.Visible;
+            ContainerQuantityDataGrid.Visibility = Visibility.Hidden;
+            PointsListView.Visibility = Visibility.Hidden;
+            ButtonSave.Visibility = Visibility.Hidden;
+        }
+
+        private void ButtonPrint_OnClick(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Печать ЭТрН");
+        }
+
+        private void EtrnDataGrid_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Console.WriteLine("sas");
         }
     }
 }
