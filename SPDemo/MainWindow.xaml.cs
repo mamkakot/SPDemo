@@ -132,53 +132,56 @@ namespace SPDemo
                 new()
                 {
                     Name = "Рейс СП 0001", RoutePoints = routePoints, Units = units, AutoNumber = "А001АА 124",
-                    DriverName = "Иванов Иван Иванович", RouteTime = DateTime.Today, AutoType = "ЗАМ"
+                    DriverName = "Иванов Иван Иванович", RouteTime = DateTime.Today, AutoType = "ЗАМ", Status = "Новый"
                 },
                 new()
                 {
                     Name = "Рейс СП 0002", RoutePoints = routePoints2,
                     Units = new List<Unit> { new() { Name = "Все пандусы", Units = units2 } },
                     AutoNumber = "А002АА 124", DriverName = "Петров Иван Иванович", RouteTime = DateTime.Today,
-                    AutoType = "ОХЛ"
+                    AutoType = "ОХЛ", Status = "Новый"
                 },
                 new()
                 {
                     Name = "Рейс СП 0003", RoutePoints = routePoints,
                     Units = new List<Unit> { new() { Name = "Все пандусы", Units = units3 } },
-                    AutoNumber = "А001АА 124", DriverName = "Сидоров Иван Иванович", RouteTime = DateTime.Today,
-                    AutoType = "ОХЛ"
+                    AutoNumber = "А003АА 124", DriverName = "Сидоров Иван Иванович", RouteTime = DateTime.Today,
+                    AutoType = "ОХЛ", Status = "Новый"
                 },
                 new()
                 {
-                    Name = "Рейс СП 0004", RoutePoints = routePoints, Units = units, AutoNumber = "А001АА 124",
-                    DriverName = "Петров Иван Иванович", RouteTime = DateTime.Today, AutoType = "ОХЛ"
+                    Name = "Рейс СП 0004", RoutePoints = routePoints, Units = units, AutoNumber = "А004АА 124",
+                    DriverName = "Петров Иван Иванович", RouteTime = DateTime.Today, AutoType = "ОХЛ", Status = "Новый"
                 },
                 new()
                 {
-                    Name = "Рейс СП 0005", RoutePoints = routePoints, Units = units, AutoNumber = "А001АА 124",
-                    DriverName = "Сидоров Иван Иванович", RouteTime = DateTime.Today, AutoType = "ЗАМ"
+                    Name = "Рейс СП 0005", RoutePoints = routePoints, Units = units, AutoNumber = "А005АА 124",
+                    DriverName = "Сидоров Иван Иванович", RouteTime = DateTime.Today, AutoType = "ЗАМ", Status = "Новый"
                 },
             };
 
             var etrns = new List<ETrN>
             {
                 new(name: "СП 0001", deliveryDate: DateTime.Now,
-                    senderAddress: "г. Красноярск, ул. Вавилова, д. 12", route: routes[0], routePoint: routePoints[0]),
+                    senderAddress: "Цех Кулинарный КФ №51 Аллея", route: routes[0], routePoint: routePoints[0]),
                 new(name: "СП 0002", deliveryDate: DateTime.Now,
-                    senderAddress: "г. Красноярск, ул. Вавилова, д. 12", route: routes[0], routePoint: routePoints[0]),
+                    senderAddress: "Склад ГП пекарный дополнительный КФ Шелен", route: routes[1], routePoint: routePoints[0]),
                 new(name: "СП 0003", deliveryDate: DateTime.Now,
-                    senderAddress: "г. Красноярск, ул. Вавилова, д. 12", route: routes[0], routePoint: routePoints[0]),
+                    senderAddress: "Цех пекарный КФ №25", route: routes[2], routePoint: routePoints[0]),
                 new(name: "СП 0004", deliveryDate: DateTime.Now,
-                    senderAddress: "г. Красноярск, ул. Вавилова, д. 12", route: routes[0], routePoint: routePoints[0]),
+                    senderAddress: "Цех пекарный КФ №51 Аллея", route: routes[3], routePoint: routePoints[0]),
                 new(name: "СП 0005", deliveryDate: DateTime.Now,
-                    senderAddress: "г. Красноярск, ул. Вавилова, д. 12", route: routes[0], routePoint: routePoints[0]),
+                    senderAddress: "Цех пекарный КФ Шелен", route: routes[4], routePoint: routePoints[0]),
             };
 
             EtrnDataGrid.ItemsSource = etrns;
             EtrnDataGrid.SelectedIndex = 0;
-            
+
             RoutesDataGrid.ItemsSource = routes;
             RoutesDataGrid.SelectedIndex = 0;
+
+            UnitsComboBox.ItemsSource = routes[0].Units;
+            AnotherUnitsComboBox.ItemsSource = routes[0].Units;
         }
 
         private void PointsListView_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -193,18 +196,39 @@ namespace SPDemo
             };
             try
             {
-                var cl = selectedRoutePoint.ContainerList ??
-                         containers.Select(
-                             container => new ContainerQuantity
-                                 { Container = container, Unit = selectedUnit }).ToList();
+                var cl = selectedRoutePoint.ContainerList.Where(quantity => quantity.Unit == selectedUnit).ToList();
+
+                // if (cl?.Any() != true)
+                // {
+                //     cl = containers.Select(container => new ContainerQuantity
+                //         { Container = container, Unit = selectedUnit }).ToList();
+                // }
+
+                var cnames = cl.Select(quantity => quantity.Container.Name).ToList();
+                foreach (var containerName in containers)
+                {
+                    if (!cnames.Contains(containerName.Name))
+                    {
+                        cl.Add(new ContainerQuantity() { Container = containerName, Unit = selectedUnit });
+                    }
+                }
+
+
                 ContainerQuantityDataGrid.ItemsSource = cl;
 
                 ContainerQuantityDataGrid.Visibility = Visibility.Visible;
                 ButtonSave.Visibility = Visibility.Visible;
+                ButtonAdd.Visibility = Visibility.Visible;
             }
             catch (Exception exception)
             {
-                Console.WriteLine(exception);
+                var cl = containers.Select(container => new ContainerQuantity
+                    { Container = container, Unit = selectedUnit }).ToList();
+                ContainerQuantityDataGrid.ItemsSource = cl;
+
+                ContainerQuantityDataGrid.Visibility = Visibility.Visible;
+                ButtonSave.Visibility = Visibility.Visible;
+                ButtonAdd.Visibility = Visibility.Visible;
             }
         }
 
@@ -212,20 +236,24 @@ namespace SPDemo
         {
             try
             {
+                var selectedUnit = UnitsTreeView.SelectedItem as Unit;
                 var point = PointsListView.SelectedItem as RoutePoint;
                 point.ContainerList = ContainerQuantityDataGrid.ItemsSource as List<ContainerQuantity>;
+                point.ContainerList.Select(quantity => quantity.Unit = selectedUnit);
             }
             catch (Exception exception)
             {
                 Console.WriteLine(exception);
             }
+
+            MessageBox.Show("Все данные по грузоместам заполнены. Пожалуйста, заполните номер пломбы и создайте ЭТрН.");
         }
 
         private void ButtonCreate_OnClick(object sender, RoutedEventArgs e)
         {
             var selectedRoute = (Route)RoutesDataGrid.SelectedItem;
             selectedRoute.InstalledSeal = TextBoxInstalledSeal.Text;
-            MessageBox.Show("ЭТрН созданы");
+            MessageBox.Show("ЭТрН созданы; ожидайте изменение статуса \"Рейса\" на \"Подписано перевозчиком\"");
         }
 
         private void UnitsTreeView_OnSelectionChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -239,6 +267,7 @@ namespace SPDemo
                     PointsListView.Visibility = Visibility.Visible;
                     ContainerQuantityDataGrid.Visibility = Visibility.Hidden;
                     ButtonSave.Visibility = Visibility.Hidden;
+                    ButtonAdd.Visibility = Visibility.Hidden;
                 }
                 catch (NullReferenceException exception)
                 {
@@ -262,6 +291,21 @@ namespace SPDemo
             ContainerQuantityDataGrid.Visibility = Visibility.Hidden;
             PointsListView.Visibility = Visibility.Hidden;
             ButtonSave.Visibility = Visibility.Hidden;
+            ButtonAdd.Visibility = Visibility.Hidden;
+
+            var unfilledUnits = selectedRoute.Units;
+            UnfilledUnitsListBox.ItemsSource = unfilledUnits;
+
+            foreach (string unit in UnfilledUnitsListBox.Items.OfType<string>())
+            {
+                //if (unit.Name.Equals("one")) {
+                ListBoxItem lbi = UnfilledUnitsListBox.ItemContainerGenerator.ContainerFromItem(unit) as ListBoxItem;
+                if (lbi != null)
+                {
+                    lbi.Foreground = Brushes.Red;
+                }
+                //}
+            }
         }
 
         private void ButtonPrint_OnClick(object sender, RoutedEventArgs e)
@@ -269,9 +313,24 @@ namespace SPDemo
             MessageBox.Show("Печать ЭТрН");
         }
 
-        private void EtrnDataGrid_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void EtrnDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            Console.WriteLine("sas");
+            var etrn = (sender as DataGridRow).Item as ETrN;
+            var addDataModalWindow = new AddDataModalWindow(etrn);
+            addDataModalWindow.Show();
+        }
+
+        private void ButtonAdd_OnClick(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("lol");
+        }
+
+        private void UnitsComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedRoute = (Route)RoutesDataGrid.SelectedItem;
+            var selectedUnit = UnitsComboBox.SelectedItem as Unit;
+            var units = selectedRoute.Units.Where(unit => unit == selectedUnit);
+            UnitsTreeView.ItemsSource = units;
         }
     }
 }

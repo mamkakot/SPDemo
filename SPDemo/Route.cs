@@ -17,6 +17,8 @@ public class Route
     public List<Unit>? Units { get; set; }
 
     public string? InstalledSeal { get; set; }
+    
+    public string? Status { get; set; }
 
     public override string? ToString()
     {

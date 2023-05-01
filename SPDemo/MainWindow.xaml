@@ -7,10 +7,10 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="650" Width="1200">
     <TabControl>
-        <TabItem Header="Приёмка товара">
+        <TabItem Header="Приёмка автомобиля">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition></RowDefinition>
                     <RowDefinition></RowDefinition>
                 </Grid.RowDefinitions>
@@ -20,9 +20,16 @@
                     <ColumnDefinition></ColumnDefinition>
                 </Grid.ColumnDefinitions>
 
-                <DataGrid Grid.Row="1" Grid.ColumnSpan="3" Name="EtrnDataGrid" Margin="7"
+                <Label HorizontalAlignment="Right">Подразделение:</Label>
+                <ComboBox Grid.Row="0" Grid.Column="1" Name="AnotherUnitsComboBox"></ComboBox>
+                <DataGrid Grid.Column="0" Grid.Row="1" Grid.RowSpan="2" Grid.ColumnSpan="3" Name="EtrnDataGrid" Margin="7"
                           d:DataContext="d:DesignInstance local:ETrN"
-                          AutoGenerateColumns="False" SelectionChanged="EtrnDataGrid_OnSelectionChanged">
+                          AutoGenerateColumns="False">
+                    <DataGrid.Resources>
+                        <Style TargetType="DataGridRow">
+                            <EventSetter Event="MouseDoubleClick" Handler="EtrnDoubleClick" />
+                        </Style>
+                    </DataGrid.Resources>
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Номер ЭТрН" Binding="{Binding Path=Name}" />
                         <DataGridTextColumn Header="Рег. номер ТС" Binding="{Binding Path=Route.AutoNumber}" />
@@ -32,15 +39,16 @@
                                             Binding="{Binding Path=Route.RouteTime, StringFormat=\{0:dd.MM.yy HH:mm:ss\}}" />
                         <DataGridTextColumn Header="Дата доставки"
                                             Binding="{Binding Path=DeliveryDate, StringFormat=\{0:dd.MM.yy HH:mm:ss\}}" />
-                        <DataGridTextColumn Header="Адрес отправителя" Binding="{Binding Path=SenderAddress}" />
+                        <DataGridTextColumn Header="Грузоотправитель" Binding="{Binding Path=SenderAddress}" />
                         <DataGridTextColumn Header="Количество грузомест" Binding="{Binding Path=ContainerCount}" />
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
         </TabItem>
-        <TabItem Header="Отправка товара">
+        <TabItem Header="Отгрузка автомобиля">
             <Grid>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="0.5*" />
                     <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
@@ -50,7 +58,11 @@
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
 
-                <DataGrid Grid.ColumnSpan="3" Name="RoutesDataGrid" Margin="7"
+                <ComboBox Grid.ColumnSpan="3" Name="UnitsComboBox" Margin="12 5"
+                          SelectionChanged="UnitsComboBox_OnSelectionChanged">
+                </ComboBox>
+
+                <DataGrid Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Name="RoutesDataGrid" Margin="7"
                           d:DataContext="d:DesignInstance local:Route"
                           AutoGenerateColumns="False" SelectionChanged="RoutesDataGrid_OnSelectionChanged">
                     <DataGrid.Columns>
@@ -60,9 +72,10 @@
                         <DataGridTextColumn Header="ФИО водителя" Binding="{Binding Path=DriverName}" />
                         <DataGridTextColumn Header="Дата отправки"
                                             Binding="{Binding Path=RouteTime, StringFormat=\{0:dd.MM.yy HH:mm:ss\}}" />
+                        <DataGridTextColumn Header="Статус" Binding="{Binding Path=Status}" />
                     </DataGrid.Columns>
                 </DataGrid>
-                <TabControl Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3">
+                <TabControl Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3">
                     <TabItem Header="Грузоместа">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -70,22 +83,30 @@
                                 <ColumnDefinition Width="1*" />
                                 <ColumnDefinition Width="1*" />
                             </Grid.ColumnDefinitions>
-
                             <ListView Grid.Column="1" Name="PointsListView"
                                       SelectionChanged="PointsListView_OnSelectionChanged">
                             </ListView>
-                            <TreeView Grid.Column="0" Name="UnitsTreeView"
-                                      SelectedItemChanged="UnitsTreeView_OnSelectionChanged">
-                                <TreeView.ItemTemplate>
-                                    <HierarchicalDataTemplate ItemsSource="{Binding Path=Units}">
-                                        <TextBlock Text="{Binding Name}" />
-                                    </HierarchicalDataTemplate>
-                                </TreeView.ItemTemplate>
-                            </TreeView>
+                            <Grid Grid.Column="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition Height="0.4*"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <TreeView Grid.Row="0" Name="UnitsTreeView"
+                                          SelectedItemChanged="UnitsTreeView_OnSelectionChanged">
+                                    <TreeView.ItemTemplate>
+                                        <HierarchicalDataTemplate ItemsSource="{Binding Path=Units}">
+                                            <TextBlock Text="{Binding Name}" />
+                                        </HierarchicalDataTemplate>
+                                    </TreeView.ItemTemplate>
+                                </TreeView>
+
+                                <Button Grid.Row="1" Name="ButtonAdd" Click="ButtonAdd_OnClick" Margin="25">Добавить склад</Button>
+                            </Grid>
+
                             <Grid Grid.Column="2">
                                 <Grid.RowDefinitions>
                                     <RowDefinition></RowDefinition>
-                                    <RowDefinition Height="0.3*"></RowDefinition>
+                                    <RowDefinition Height="0.4*"></RowDefinition>
                                 </Grid.RowDefinitions>
                                 <DataGrid Name="ContainerQuantityDataGrid"
                                           d:DataContext="d:DesignInstance local:ContainerQuantity"
@@ -103,7 +124,9 @@
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"></RowDefinition>
-                                <RowDefinition Height="50"></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="1*"></RowDefinition>
                                 <RowDefinition Height="Auto"></RowDefinition>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
@@ -114,14 +137,32 @@
                             <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" Margin="20, 0">Номер пломбы:</Label>
                             <TextBox Grid.Row="0" Grid.Column="1" Name="TextBoxInstalledSeal"></TextBox>
 
-                            <Button Grid.Row="2" Name="ButtonCreate" Click="ButtonCreate_OnClick" Grid.Column="0"
+                            <CheckBox Grid.Row="1" Grid.Column="0">Догрузка ТС</CheckBox>
+                            <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Height="42" Width="228" Margin="10, 12, 10, 12">Обновить</Button>
+                            <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                    <RowDefinition Height="1*"></RowDefinition>
+                                </Grid.RowDefinitions>
+
+                                <Label Grid.Row="0">Информация по грузоместам от складов:</Label>
+                                <ListBox Grid.Row="1" Name="UnfilledUnitsListBox">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding}" Foreground="Red"></TextBlock>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Grid>
+
+                            <Button Grid.Row="4" Name="ButtonCreate" Click="ButtonCreate_OnClick" Grid.Column="0"
                                     Margin="70, 30" Height="50" Width="120">
                                 Создать ЭТрН
                             </Button>
 
-                            <Button Grid.Row="2" Name="ButtonPrint" Click="ButtonPrint_OnClick" Grid.Column="1"
+                            <Button Grid.Row="4" Name="ButtonPrint" Click="ButtonPrint_OnClick" Grid.Column="1"
                                     Margin="70, 30" Height="50" Width="120">
-                                Напечатать ТрН
+                                Напечатать сводную ТрН
                             </Button>
                         </Grid>
                     </TabItem>

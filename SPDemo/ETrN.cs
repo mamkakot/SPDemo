@@ -17,9 +17,21 @@ public class ETrN
     public RoutePoint RoutePoint { get; set; }
     public string Name { get; set; }
     public DateTime DeliveryDate { get; set; }
+
+    public DateTime? RealDeliveryDate { get; set; }
     public string SenderAddress { get; set; }
     public Route Route { get; set; }
 
-    public int ContainerCount => 12;
-    //Route.RoutePoints.Find(rp => rp.Gln.Base == RoutePoint.Gln.Base).ContainerList.Count;
+    public int ContainerCount
+    {
+        get
+        {
+            var containerQuantities = Route.RoutePoints.Find(rp => rp.Gln.Base == RoutePoint.Gln?.Base).ContainerList;
+            if (containerQuantities != null)
+                return Route.RoutePoints != null
+                    ? containerQuantities.Count
+                    : 0;
+            return 0;
+        }
+    }
 }

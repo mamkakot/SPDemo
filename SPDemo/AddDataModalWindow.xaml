@@ -1,0 +1,57 @@
+﻿<Window x:Class="SPDemo.AddDataModalWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:SPDemo"
+        mc:Ignorable="d"
+        Title="Внесите данные" Height="750" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Label Grid.Row="0" Grid.Column="0" Margin="0, 12, 0, 12">Дата окончания отгрузки: </Label>
+        <DatePicker Grid.Row="0" Grid.Column="1" Name="RealDeliveryDateDatePickerTextBox" Margin="0, 12, 0, 12"></DatePicker>
+        <Label Grid.Row="1" Grid.Column="0" Margin="0, 12, 0, 12">Пломба входящая</Label>
+        <TextBox Grid.Row="1" Grid.Column="1" Name="InstalledSealTextBox" Margin="0, 12, 0, 12"></TextBox>
+        <CheckBox Grid.Column="0" Grid.Row="2">ТС приехало без пломбы</CheckBox>
+        <Label Grid.Row="3" Grid.Column="0" Margin="0, 12, 0, 12">Пломба исходящая: </Label>
+        <TextBox Grid.Row="3" Grid.Column="1" Name="OutSealTextBox" Margin="0, 12, 0, 12"></TextBox>
+        <CheckBox Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" Name="sdf" Margin="0, 12, 0, 12">Конечная точка, возврат ТС без груза</CheckBox>
+
+        <Button Grid.Row="5" Grid.Column="1" Margin="10, 12, 10, 12" Height="42">Заполнить по плану</Button>
+        <TabControl Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="6">
+            <TabItem Header="Грузоместа">
+                <DataGrid Name="ContainerQuantityDataGrid"
+                          d:DataContext="d:DesignInstance local:ContainerQuantity"
+                          AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Вид тары" Binding="{Binding Path=Container}" />
+                        <DataGridTextColumn Header="Заявленное количество" Binding="{Binding Path=Quantity}" />
+                        <DataGridTextColumn Header="Фактически принято"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+        </TabControl>
+
+        <Label Grid.Row="7" Grid.Column="0" Margin="0, 12, 0, 12">Комментарий: </Label>
+        <TextBox Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2" Name="CommentaryTextBox" Margin="0, 12, 0, 12"></TextBox>
+        
+        <Button Grid.Row="8" Grid.Column="0" Height="42" Margin="10, 12, 10, 12">Подписать ЭТрН</Button>
+        <Button Grid.Row="8" Grid.Column="2" Height="42" Margin="10, 12, 10, 12">Отмена</Button>
+    </Grid>
+</Window>
